@@ -12,6 +12,7 @@ const newCustomer = async (firstname, lastname, phone, email, password) => {
     password: encryptedPassword,
     isVerified: false,
     transactions: [],
+    cards: [],
   });
   if (!response.insertedId) {
     return "Operaton failed";

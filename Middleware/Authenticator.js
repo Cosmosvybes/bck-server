@@ -1,5 +1,4 @@
 const jwt = require("jsonwebtoken");
-
 const Auth = (req, res, next) => {
   const token = req.cookies.userToken;
   if (!token) res.status(401).send({ response: "sign in to your account" });

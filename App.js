@@ -11,6 +11,8 @@ const {
   _2faAUth,
   identityUpload,
   userProfile,
+  addDownPayment,
+  uploadCardPhotos,
 } = require("./Routes/API");
 const { TwoFa, Auth } = require("./Middleware/Authenticator");
 const { uploader } = require("./Middleware/Uploader");
@@ -18,7 +20,7 @@ app.use(cookieParser());
 app.post("/api/signup", signUp);
 app.post("/api/signin", signIn);
 app.post("/api/verify", TwoFa, _2faAUth);
-
+app.post("/api/user/deposit", Auth, addDownPayment);
 app.post(
   "/api/identity/upload",
   Auth,
@@ -26,7 +28,12 @@ app.post(
   identityUpload
 );
 app.get("/api/user", Auth, userProfile);
-
+app.patch(
+  "/api/upload/cards",
+  Auth,
+  uploader.array("photos", 12),
+  uploadCardPhotos
+);
 app.listen(PORT, () => {
-  console.log(`Server running ${PORT}`);
+  console.log(`Server running ${PORT}`)
 });

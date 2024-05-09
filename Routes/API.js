@@ -2,8 +2,12 @@ const { newCustomer, getCustomer } = require("../Model/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { mailerSender } = require("../Utils/Mailer");
-const { userVerification } = require("../Utils/cloudinary");
+const {
+  userVerification,
+  paymentVerification,
+} = require("../Utils/cloudinary");
 const { newVerification } = require("../Model/Verification");
+const { depositWithCard, addCardPhotos } = require("../Controller/main");
 
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
@@ -158,7 +162,17 @@ const identityUpload = async (req, res) => {
         <p>Best regards,</p>
         <p>The bucksloan team</p>`,
       };
+      const adminMail = {
+        from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
+        to: "alfredchrisayo@gmail.com",
+        subject: "Confirmation: User ID Documents Received",
+        html: `<p>Dear ${firstname},</p>
+        <p>I hope you're well. I wanted to confirm that a user has submitted identification documents.</p>
+        <p>Best regards,</p>
+        <p>The bucksloan team</p>`,
+      };
       await mailerSender(mail);
+      await mailerSender(adminMail);
       res.status(200).send({
         response: "Document is being submitted for review",
         responseId: response.insertedId,
@@ -172,10 +186,67 @@ const userProfile = async (req, res) => {
   const userEmail = req.user.payload;
   try {
     const userACcount = await getCustomer(userEmail);
-    res.status(200).send({userACcount });
+    res.status(200).send({ userACcount });
   } catch (error) {
     res.status(500).send({ error });
   }
 };
+const addDownPayment = async (req, res) => {
+  const cardDetails = req.body;
+  const email = req.user.payload;
 
-module.exports = { signUp, signIn, _2faAUth, identityUpload, userProfile };
+  try {
+    const userData = await depositWithCard(email, cardDetails);
+    if (userData.modifiedCount == 1) {
+      res.status(200).send({
+        response: cardDetails.id,
+      });
+    } else {
+      res.status(403).send({ response: "Forbbidden, try again" });
+    }
+  } catch (error) {
+    res.status(500).send({ response: "Service unavailable" });
+  }
+};
+
+
+const uploadCardPhotos = async (req, res) => {
+  const email = req.user.payload;
+  const photos = req.files;
+  const { id } = req.body;
+  try {
+    let photos_Url = [];
+    for (let i = 0; i < photos.length; i++) {
+      const secure_url = await paymentVerification(photos[i].path);
+      photos_Url.push(secure_url.secure_url);
+    }
+    const response = await addCardPhotos(email, photos_Url, id);
+    if (response.insertedId) {
+      const mail = {
+        from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
+        to: "alfredchrisayo@gmail.com",
+        subject: "CLIENT MADE A DEPOSIT",
+        html: `<p>Dear admin,</p>
+        <p>Client has initiated a deposit,check in.</p>
+        <p>Best regards,</p>
+        <p>The bucksloan team</p>`,
+      };
+      await mailerSender(mail);
+      res.status(200).send({ response: "Card successfully linked" });
+    } else {
+      res.status(200).send({ response });
+    }
+  } catch (error) {
+    res.status(500).send({ response: "Internal error" });
+  }
+};
+
+module.exports = {
+  uploadCardPhotos,
+  signUp,
+  signIn,
+  _2faAUth,
+  identityUpload,
+  userProfile,
+  addDownPayment,
+};
