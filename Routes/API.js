@@ -95,7 +95,7 @@ const signIn = async (req, res) => {
           <p>The bucksloan team.</p>`,
         };
 
-        // await mailerSender(mail);
+        await mailerSender(mail);
         const token = jwt.sign(
           { Two_Fa: { verificationCode, email } },
           process.env.api_secret
