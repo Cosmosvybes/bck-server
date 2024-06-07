@@ -78,6 +78,7 @@ const signIn = async (req, res) => {
           maxAge: 360000000,
           path: "/api",
           httpOnly: true,
+          secure: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -102,9 +103,10 @@ const signIn = async (req, res) => {
           maxAge: 36000000,
           path: "/api/verify",
           httpOnly: true,
+          secure: true,
         });
         res.status(200).send({
-          response: "logged in successfully",
+          response: "account logged in successfully",
         });
       }
     } else {
