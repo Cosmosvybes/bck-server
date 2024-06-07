@@ -107,6 +107,7 @@ const signIn = async (req, res) => {
         });
         res.status(200).send({
           response: "account logged in successfully",
+          isAuthorised: true,
         });
       }
     } else {
