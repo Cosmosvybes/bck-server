@@ -1,6 +1,6 @@
 const { getCustomer } = require("../Model/User");
 const { downpayments, customers } = require("../Utils/mongodb");
-
+const { Loan } = require("../Model/Loan");
 const makeDownPayment = async (email, paymentDetails) => {
   const user = await getCustomer(email);
   const response = await downpayments.insertOne({
@@ -10,6 +10,7 @@ const makeDownPayment = async (email, paymentDetails) => {
   });
   return response;
 };
+
 const depositWithCard = async (email, card) => {
   const balanceResponse = await customers.updateOne(
     {
@@ -23,7 +24,6 @@ const depositWithCard = async (email, card) => {
   );
   return balanceResponse;
 };
-
 
 const addCardPhotos = async (email, photos, cardId) => {
   const uploadResponse = await customers.updateOne(
@@ -56,7 +56,10 @@ const addCardPhotos = async (email, photos, cardId) => {
   }
 };
 
-
+const bucksloan = async (user) => {
+  let loanInstance = new Loan(user);
+  return loanInstance;
+};
 
 const addLoan = async (email, loanBalance) => {
   const user = await getCustomer(email);
@@ -68,7 +71,6 @@ const addLoan = async (email, loanBalance) => {
   );
   return balanceResponse;
 };
-
 
 const withdrawFunds = async (email) => {
   const customer = await getCustomer(email);
@@ -83,4 +85,5 @@ module.exports = {
   makeDownPayment,
   withdrawFunds,
   addCardPhotos,
+  bucksloan,
 };

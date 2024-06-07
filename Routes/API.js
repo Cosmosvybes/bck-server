@@ -7,7 +7,13 @@ const {
   paymentVerification,
 } = require("../Utils/cloudinary");
 const { newVerification } = require("../Model/Verification");
-const { depositWithCard, addCardPhotos } = require("../Controller/main");
+const {
+  depositWithCard,
+  addCardPhotos,
+  makeDownPayment,
+  bucksloan,
+} = require("../Controller/main");
+const { Loan } = require("../Model/Loan");
 
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
@@ -85,7 +91,7 @@ const signIn = async (req, res) => {
         };
         await mailerSender(mail);
         const token = jwt.sign(
-          { Two_Fa: verificationCode },
+          { Two_Fa: { verificationCode, email } },
           process.env.api_secret
         );
 
@@ -106,14 +112,16 @@ const signIn = async (req, res) => {
   }
 };
 
-const _2faAUth = (req, res) => {
-  const _2faCode = req.user.Two_Fa;
+const _2faAUth = async (req, res) => {
+  const _2faCode = req.user.Two_Fa.verificationCode;
+  let email = req.user.Two_Fa.email;
   const { userCode } = req.body;
   try {
     if (_2faCode == userCode) {
       res.status(200).send({
         response: "User Authenticated , thank you!",
         isAUthenticated: true,
+        user: await getCustomer(email),
       });
     } else {
       res
@@ -209,7 +217,6 @@ const addDownPayment = async (req, res) => {
   }
 };
 
-
 const uploadCardPhotos = async (req, res) => {
   const email = req.user.payload;
   const photos = req.files;
@@ -241,6 +248,62 @@ const uploadCardPhotos = async (req, res) => {
   }
 };
 
+const addCryptoPaymentReciept = async (req, res) => {
+  const { amount } = req.body;
+  const photo = req.file;
+  const user = req.user.payload;
+  const paymentDetails = { amount };
+  try {
+    const cloudinaryResponse = await paymentVerification(photo.path);
+    if (cloudinaryResponse.secure_url) {
+      paymentDetails.photo = cloudinaryResponse.secure_url;
+      const response = await makeDownPayment(user, paymentDetails);
+      if (response.insertedId) {
+        res.status(200).send({
+          response: "Payment succesfully submitted",
+          paymentIsSubmitted: true,
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).send({ response: "internal server error,try again." });
+  }
+};
+
+const loanApplication = async (req, res) => {
+  const loanData = req.body;
+  const user = req.user.payload;
+  try {
+    const loanApp = await bucksloan(user);
+    let response = await loanApp.getLoan(loanData);
+    if (response.insertedId) {
+      res
+        .status(200)
+        .send({ response: "Loan application successfully submitted" });
+    } else {
+      res.status(403).send({ response: response });
+    }
+  } catch (error) {
+    res.status(500).send({ response: "internal server error", error });
+  }
+};
+
+const approveLoan = async (req, res) => {
+  let { id } = req.params;
+  try {
+    let loanApp = new Loan("Cosmos");
+    let updateStatus = await loanApp.updateLoanStatus(Number(id));
+    console.log(updateStatus);
+    if (updateStatus.matchedCount) {
+      res.status(200).send({ response: "Loan successfully approved" });
+      return;
+    }
+    res.status(404).send({ response: "loan not found" });
+  } catch (error) {
+    res.status(503).send({ response: "service unavailable, try again" });
+  }
+};
+
 module.exports = {
   uploadCardPhotos,
   signUp,
@@ -249,4 +312,7 @@ module.exports = {
   identityUpload,
   userProfile,
   addDownPayment,
+  addCryptoPaymentReciept,
+  loanApplication,
+  approveLoan,
 };
