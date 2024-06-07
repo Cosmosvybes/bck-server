@@ -47,8 +47,9 @@ const signUp = async (req, res) => {
     );
     res.cookie("Two_Fa", token, {
       maxAge: 36000000,
-      path: "/api/verify",
+      path: "/api/user/verify",
     });
+    console.log(token, verificationCode);
     res
       .status(200)
       .send({ response: "Two-factor authentication code sent to your e-mail" });
@@ -75,7 +76,8 @@ const signIn = async (req, res) => {
         );
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
-          path: "/api/",
+          path: "http://localhost:8080/api/",
+          httpOnly: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -84,12 +86,13 @@ const signIn = async (req, res) => {
           to: email,
           subject: "Two-Factor Authentication",
           html: `<p>Hey ${email}</p>
-          <p>A sign in attempt requires your futher verificationbecause we did recognize your device. To complete the sign in, enter the verification code.</p>
+          <p>A sign in attempt requires your futher verification because we did recognize your device. To complete the sign in, enter the verification code.</p>
           <p>Verification code: ${verificationCode}</p>
           <p>Thanks,</p>
-          <p>The bucksloan team,</p>`,
+          <p>The bucksloan team.</p>`,
         };
-        await mailerSender(mail);
+
+        // await mailerSender(mail);
         const token = jwt.sign(
           { Two_Fa: { verificationCode, email } },
           process.env.api_secret
@@ -97,11 +100,10 @@ const signIn = async (req, res) => {
 
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
-          path: "/api/verify",
+          path: "http://localhost:8080/api/verify",
         });
         res.status(200).send({
-          response: "User logged in successfully",
-          userToken,
+          response: "logged in successfully",
         });
       }
     } else {
