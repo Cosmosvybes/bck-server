@@ -76,7 +76,7 @@ const signIn = async (req, res) => {
         );
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
-          path: "http://localhost:8080/api/",
+          path: "/api",
           httpOnly: true,
         });
         const code = Date.now();
@@ -100,7 +100,8 @@ const signIn = async (req, res) => {
 
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
-          path: "http://localhost:8080/api/verify",
+          path: "/api/verify",
+          httpOnly: true,
         });
         res.status(200).send({
           response: "logged in successfully",
