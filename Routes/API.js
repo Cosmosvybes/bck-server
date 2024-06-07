@@ -48,6 +48,7 @@ const signUp = async (req, res) => {
     res.cookie("Two_Fa", token, {
       maxAge: 36000000,
       path: "/api/user/verify",
+      sameSite: "None",
     });
     console.log(token, verificationCode);
     res
@@ -79,6 +80,7 @@ const signIn = async (req, res) => {
           path: "/api",
           httpOnly: true,
           secure: true,
+          sameSite: "None",
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -104,6 +106,7 @@ const signIn = async (req, res) => {
           path: "/api/verify",
           httpOnly: true,
           secure: true,
+          sameSite: "None",
         });
         res.status(200).send({
           response: "account logged in successfully",
