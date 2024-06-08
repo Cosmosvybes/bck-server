@@ -42,7 +42,7 @@ const signUp = async (req, res) => {
     };
 
     const token = jwt.sign(
-      { Two_Fa: { verificationCode, email } },
+      { Two_Fa: { verificationCode } },
       process.env.api_secret
     );
     res.cookie("Two_Fa", token, {
@@ -51,6 +51,18 @@ const signUp = async (req, res) => {
       sameSite: "None",
       httpOnly: true,
       secure: true,
+    });
+
+    const userToken = jwt.sign(
+      { payload: email.toLowerCase() },
+      process.env.api_key
+    );
+    res.cookie("userToken", userToken, {
+      maxAge: 360000000,
+      path: "/api",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
     });
     // console.log(token, verificationCode);
     res
