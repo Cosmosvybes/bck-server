@@ -47,8 +47,10 @@ const signUp = async (req, res) => {
     );
     res.cookie("Two_Fa", token, {
       maxAge: 36000000,
-      path: "/api/user/verify",
+      path: "/api/verify",
       sameSite: "None",
+      httpOnly: true,
+      secure: true,
     });
     console.log(token, verificationCode);
     res
