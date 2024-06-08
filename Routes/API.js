@@ -38,11 +38,11 @@ const signUp = async (req, res) => {
       <p>As part of our secuirty measures, we require a 2-factor authentication (2FA) process to ensure your account is safe and secure. Please find your 2FA code below.</p>
       <p style="font:italic;">2FA code  ${verificationCode}</p>
       <p>Best regards,</p>
-      <p>The bucksloan team,</p>`,
+      <p>The bucksloan team.</p>`,
     };
 
     const token = jwt.sign(
-      { Two_Fa: verificationCode },
+      { Two_Fa: { verificationCode, email } },
       process.env.api_secret
     );
     res.cookie("Two_Fa", token, {
@@ -52,7 +52,7 @@ const signUp = async (req, res) => {
       httpOnly: true,
       secure: true,
     });
-    console.log(token, verificationCode);
+    // console.log(token, verificationCode);
     res
       .status(200)
       .send({ response: "Two-factor authentication code sent to your e-mail" });
