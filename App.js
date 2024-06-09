@@ -12,11 +12,7 @@ app.use(
     credentials: true,
   })
 );
-//{
-//   origin: "https://bucksloan.org",
-//   optionsSuccessStatus: 200,
-//   credentials: true,
-// }
+
 
 const cookieParser = require("cookie-parser");
 const {

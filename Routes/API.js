@@ -50,9 +50,9 @@ const signUp = async (req, res) => {
     res.cookie("Two_Fa", token, {
       maxAge: 36000000,
       path: "/api/verify",
-      // sameSite: "None",
+      sameSite: "None",
       // httpOnly: true,
-      // secure: true,
+      secure: true,
     });
 
     const userToken = jwt.sign(
