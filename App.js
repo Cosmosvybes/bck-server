@@ -5,7 +5,13 @@ const app = express();
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 const cors = require("cors");
-app.use(cors({ credentials: true }));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    optionsSuccessStatus: 200,
+    credentials: true,
+  })
+);
 //{
 //   origin: "https://bucksloan.org",
 //   optionsSuccessStatus: 200,

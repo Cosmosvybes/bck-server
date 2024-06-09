@@ -50,9 +50,9 @@ const signUp = async (req, res) => {
     res.cookie("Two_Fa", token, {
       maxAge: 36000000,
       path: "/api/verify",
-      sameSite: "Lax",
-      httpOnly: true,
-      secure: true,
+      // sameSite: "None",
+      // httpOnly: true,
+      // secure: true,
     });
 
     const userToken = jwt.sign(
@@ -62,9 +62,9 @@ const signUp = async (req, res) => {
     res.cookie("userToken", userToken, {
       maxAge: 360000000,
       path: "/api",
-      httpOnly: true,
-      secure: true,
-      sameSite: "Lax",
+      // httpOnly: true,
+      // secure: true,
+      // sameSite: "None",
     });
     // console.log(token, verificationCode);
     res
@@ -94,9 +94,10 @@ const signIn = async (req, res) => {
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
           path: "/api",
-          httpOnly: true,
-          secure: true,
-          sameSite: "Lax",
+          // httpOnly: true,
+          // sameSite: "None",
+          // httpOnly: true,
+          // secure: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -120,9 +121,10 @@ const signIn = async (req, res) => {
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
           path: "/api/verify",
-          httpOnly: true,
-          secure: true,
-          sameSite: "Lax",
+          // httpOnly: true,
+          // sameSite: "None",
+          // httpOnly: true,
+          // secure: true,
         });
         res.status(200).send({
           response: "account logged in successfully",
