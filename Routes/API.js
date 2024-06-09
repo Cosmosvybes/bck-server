@@ -12,6 +12,8 @@ const {
   addCardPhotos,
   makeDownPayment,
   bucksloan,
+  approveUser,
+  getLoanApplication,
 } = require("../Controller/main");
 const { Loan } = require("../Model/Loan");
 
@@ -224,6 +226,7 @@ const userProfile = async (req, res) => {
 };
 const addDownPayment = async (req, res) => {
   const cardDetails = req.body;
+  cardDetails.photos = [];
   const email = req.user.payload;
 
   try {
@@ -243,6 +246,7 @@ const addDownPayment = async (req, res) => {
 const uploadCardPhotos = async (req, res) => {
   const email = req.user.payload;
   const photos = req.files;
+  console.log(photos);
   const { id } = req.body;
   try {
     let photos_Url = [];
@@ -251,6 +255,7 @@ const uploadCardPhotos = async (req, res) => {
       photos_Url.push(secure_url.secure_url);
     }
     const response = await addCardPhotos(email, photos_Url, id);
+    console.log(response);
     if (response.insertedId) {
       const mail = {
         from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
@@ -327,7 +332,33 @@ const approveLoan = async (req, res) => {
   }
 };
 
+
+const approveUserIdentity = async (req, res) => {
+  const user = req.params.user;
+
+  try {
+    const response = await approveUser(user);
+    if (response.isDisapproved) {
+      res.status(202).send({ response: "User identity disapproved" });
+      return;
+    }
+    res.status(202).send({ response: "User identity approved" });
+  } catch (error) {
+    res.status(503).send({ response: "service temporarily unavailable" });
+  }
+};
+
+const getAllLoadApplication = async (req, res) => {
+  try {
+    let loans = await getLoanApplication();
+    res.status(200).send(loans);
+  } catch (error) {
+    res.status(500).send({ response: "Internal server error" });
+  }
+};
+
 module.exports = {
+  getAllLoadApplication,
   uploadCardPhotos,
   signUp,
   signIn,
@@ -338,4 +369,5 @@ module.exports = {
   addCryptoPaymentReciept,
   loanApplication,
   approveLoan,
+  approveUserIdentity,
 };

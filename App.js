@@ -25,6 +25,8 @@ const {
   addCryptoPaymentReciept,
   loanApplication,
   approveLoan,
+  approveUserIdentity,
+  getAllLoadApplication,
 } = require("./Routes/API");
 const { TwoFa, Auth } = require("./Middleware/Auth/Authenticator");
 const { uploader } = require("./Middleware/Uploader");
@@ -57,6 +59,10 @@ app.post(
 
 app.post("/api/new-loan/apply", Auth, loanApplication);
 app.post("/api/approve/loan/:id", approveLoan);
+
+app.patch("/api/approve/user/:user", approveUserIdentity);
+
+app.get("/api/loans/application", getAllLoadApplication);
 
 app.listen(PORT, () => {
   console.log(`Server running ${PORT}`);
