@@ -5,13 +5,12 @@ const app = express();
 app.use(urlencoded({ extended: true }));
 app.use(express.json());
 const cors = require("cors");
-app.use(
-  cors({
-    origin: "https://bucksloan.org",
-    optionsSuccessStatus: 200,
-    credentials: true,
-  })
-);
+app.use(cors());
+//{
+//   origin: "https://bucksloan.org",
+//   optionsSuccessStatus: 200,
+//   credentials: true,
+// }
 
 const cookieParser = require("cookie-parser");
 const {
