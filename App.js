@@ -43,7 +43,7 @@ app.post(
   uploader.single("image"),
   identityUpload
 );
-app.get("/api/user", Auth, userProfile);
+app.get("/api/user/:userToken", Auth, userProfile);
 app.patch(
   "/api/upload/cards",
   Auth,

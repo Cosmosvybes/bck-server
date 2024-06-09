@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
+
 const Auth = (req, res, next) => {
   const token = req.cookies.userToken;
-  if (!token) res.status(401).send({ response: "sign in to your account" });
-  const userData = jwt.verify(token, process.env.api_key);
+  let userToken_ = req.params.userToken;
+  if (!token && !userToken_)
+    res.status(401).send({ response: "sign in to your account" });
+  const userData = jwt.verify(token ? token : userToken_, process.env.api_key);
   req.user = userData;
   next();
 };
