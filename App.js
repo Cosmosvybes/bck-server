@@ -38,26 +38,26 @@ app.post("/api/signin", signIn);
 app.post("/api/verify/:token", TwoFa, _2faAUth);
 app.post("/api/user/deposit", Auth, addDownPayment);
 app.post(
-  "/api/identity/upload",
+  "/api/identity/upload/:userToken",
   Auth,
   uploader.single("image"),
   identityUpload
 );
 app.get("/api/user/:userToken", Auth, userProfile);
 app.patch(
-  "/api/upload/cards",
+  "/api/upload/cards/:userToken",
   Auth,
   uploader.array("photos", 12),
   uploadCardPhotos
 );
 app.post(
-  "/api/crypto-payment",
+  "/api/crypto-payment/:userToken",
   Auth,
   uploader.single("photo"),
   addCryptoPaymentReciept
 );
 
-app.post("/api/new-loan/apply", Auth, loanApplication);
+app.post("/api/new-loan/apply/:userToken", Auth, loanApplication);
 app.post("/api/approve/loan/:id", approveLoan);
 
 app.patch("/api/approve/user/:user", approveUserIdentity);
