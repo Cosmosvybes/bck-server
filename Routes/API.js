@@ -154,7 +154,7 @@ const _2faAUth = async (req, res) => {
         .send({ response: "Code does not match", isAUthenticated: false });
     }
   } catch (error) {
-    console.log(error);
+    res.status(500).send({ response: "internal server error" });
   }
 };
 
@@ -331,7 +331,6 @@ const approveLoan = async (req, res) => {
     res.status(503).send({ response: "service unavailable, try again" });
   }
 };
-
 
 const approveUserIdentity = async (req, res) => {
   const user = req.params.user;
