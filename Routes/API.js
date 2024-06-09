@@ -51,8 +51,8 @@ const signUp = async (req, res) => {
       maxAge: 36000000,
       path: "/api/verify",
       sameSite: "strict",
-      httpOnly: true,
-      secure: true,
+      // httpOnly: true,
+      // secure: true,
     });
 
     const userToken = jwt.sign(
@@ -62,8 +62,8 @@ const signUp = async (req, res) => {
     res.cookie("userToken", userToken, {
       maxAge: 360000000,
       path: "/api",
-      httpOnly: true,
-      secure: true,
+      // httpOnly: true,
+      // secure: true,
       sameSite: "strict",
     });
     // console.log(token, verificationCode);
