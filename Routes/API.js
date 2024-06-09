@@ -51,7 +51,6 @@ const signUp = async (req, res) => {
       maxAge: 36000000,
       path: "/api/verify",
       sameSite: "None",
-      // httpOnly: true,
       secure: true,
     });
 
@@ -62,11 +61,9 @@ const signUp = async (req, res) => {
     res.cookie("userToken", userToken, {
       maxAge: 360000000,
       path: "/api",
-      // httpOnly: true,
-      // secure: true,
-      // sameSite: "None",
+      sameSite: "None",
+      secure: true,
     });
-    // console.log(token, verificationCode);
     res
       .status(200)
       .send({ response: "Two-factor authentication code sent to your e-mail" });
@@ -94,10 +91,8 @@ const signIn = async (req, res) => {
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
           path: "/api",
-          // httpOnly: true,
-          // sameSite: "None",
-          // httpOnly: true,
-          // secure: true,
+          sameSite: "None",
+          secure: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -121,10 +116,8 @@ const signIn = async (req, res) => {
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
           path: "/api/verify",
-          // httpOnly: true,
-          // sameSite: "None",
-          // httpOnly: true,
-          // secure: true,
+          sameSite: "None",
+          secure: true,
         });
         res.status(200).send({
           response: "account logged in successfully",
