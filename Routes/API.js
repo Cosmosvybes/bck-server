@@ -94,8 +94,8 @@ const signIn = async (req, res) => {
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
           path: "/api",
-          // httpOnly: true,
-          // secure: true,
+          httpOnly: true,
+          secure: true,
           sameSite: "Lax",
         });
         const code = Date.now();
@@ -120,8 +120,8 @@ const signIn = async (req, res) => {
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
           path: "/api/verify",
-          // httpOnly: true,
-          // secure: true,
+          httpOnly: true,
+          secure: true,
           sameSite: "Lax",
         });
         res.status(200).send({
