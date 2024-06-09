@@ -122,6 +122,8 @@ const signIn = async (req, res) => {
         res.status(200).send({
           response: "account logged in successfully",
           isAuthorised: true,
+          token,
+          userToken,
         });
       }
     } else {
@@ -135,6 +137,7 @@ const signIn = async (req, res) => {
 const _2faAUth = async (req, res) => {
   const _2faCode = req.user.Two_Fa.verificationCode;
   let email = req.user.Two_Fa.email;
+  
   const { userCode } = req.body;
   try {
     if (_2faCode == userCode) {

@@ -13,7 +13,6 @@ app.use(
   })
 );
 
-
 const cookieParser = require("cookie-parser");
 const {
   signUp,
@@ -36,7 +35,7 @@ app.use(cookieParser());
 
 app.post("/api/signup", signUp);
 app.post("/api/signin", signIn);
-app.post("/api/verify", TwoFa, _2faAUth);
+app.post("/api/verify/:token", TwoFa, _2faAUth);
 app.post("/api/user/deposit", Auth, addDownPayment);
 app.post(
   "/api/identity/upload",

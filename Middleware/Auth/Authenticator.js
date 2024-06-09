@@ -8,11 +8,13 @@ const Auth = (req, res, next) => {
 };
 
 const TwoFa = (req, res, next) => {
+  const token_ = req.params.token;
   const token = req.cookies.Two_Fa;
-  if (!token) {
+  console.log(token_);
+  if (!token && !token_) {
     res.status(401).send({ response: "token not found, try again" });
   }
-  const tokenData = jwt.verify(token, process.env.api_secret);
+  const tokenData = jwt.verify(token ? token : token_, process.env.api_secret);
   req.user = tokenData;
   next();
 };
