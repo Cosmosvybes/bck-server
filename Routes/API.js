@@ -15,7 +15,7 @@ const {
   approveUser,
   getLoanApplication,
 } = require("../Controller/main");
-const { Loan } = require("../Model/Loan");
+const { Loan, getLoan, approveLoanRequest } = require("../Model/Loan");
 
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
@@ -304,8 +304,7 @@ const loanApplication = async (req, res) => {
   const loanData = req.body;
   const user = req.user.payload;
   try {
-    const loanApp = await bucksloan(user);
-    let response = await loanApp.getLoan(loanData);
+    const response = await getLoan(user, loanData);
     if (response.insertedId) {
       res
         .status(200)
@@ -319,18 +318,19 @@ const loanApplication = async (req, res) => {
 };
 
 const approveLoan = async (req, res) => {
-  let { id } = req.params;
+  let id = req.params.id;
+  let user = req.query.email;
   try {
-    let loanApp = new Loan("Cosmos");
-    let updateStatus = await loanApp.updateLoanStatus(Number(id));
-    console.log(updateStatus);
-    if (updateStatus.matchedCount) {
-      res.status(200).send({ response: "Loan successfully approved" });
+    let response = await approveLoanRequest(user, id);
+    if (response.matchedCount === 1) {
+      res
+        .status(200)
+        .send({ response: "Loan application successfully approved" });
       return;
     }
-    res.status(404).send({ response: "loan not found" });
+    res.status(403).send({ response: "request forbidden" });
   } catch (error) {
-    res.status(503).send({ response: "service unavailable, try again" });
+    res.status(500).send({ response: "internal server error", error });
   }
 };
 
@@ -359,12 +359,8 @@ const getAllLoadApplication = async (req, res) => {
 };
 
 const updatePaymentReceipt = (req, res) => {
-  
   try {
-    
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 };
 
 module.exports = {
