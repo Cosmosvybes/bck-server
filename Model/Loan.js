@@ -1,5 +1,7 @@
+const { mailerSender } = require("../Utils/Mailer");
 const { loans } = require("../Utils/mongodb");
 const { customers } = require("../Utils/mongodb");
+const { getCustomer } = require("./User");
 class Loan {
   constructor(user) {
     this.user = user;
@@ -62,11 +64,37 @@ class Loan {
   }
   async updateLoanStatus(id) {
     let loanApplication = await loans.findOne({ id: id });
+    let { amount, loantype, loanTerm } = loanApplication.loanData;
     let { user } = loanApplication;
+    let customer = await getCustomer(user);
+    let { firstname } = customer;
+
     let response = await customers.updateOne(
       { email: user, "transactions.id": id },
       { $set: { "transactions.$.status": "Approved" } }
     );
+    if (response.matchedCount === 1) {
+      await customers.updateOne(
+        { email: user },
+        { $set: { accountBalance: amount } }
+      );
+      const mail = {
+        from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
+        to: user,
+        subject: "Loan Approval",
+        html: `<p>Dear ${firstname}</p>
+        <p>Congratulations!</p>
+        <p> We are thrilled to inform you that your loan application with Bucksloan has been successfully approved. After a thorough review of your application, we are pleased to extend to you a loan amount of ${amount}.</p>
+        <p>Loan Details</p>
+        <p>Loan Type: ${loantype}</p>
+        <p>Loan Term: ${loanTerm}</p>
+        <p>Loan Amount: ${amount}</p>
+
+        <p>Best regards,</p>
+        <p>The bucksloan team.</p>`,
+      };
+      await mailerSender(mail);
+    }
     await loans.updateOne({ id: id }, { $set: { status: "Approved" } });
     return response;
   }

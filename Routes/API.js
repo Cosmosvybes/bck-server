@@ -358,6 +358,15 @@ const getAllLoadApplication = async (req, res) => {
   }
 };
 
+const updatePaymentReceipt = (req, res) => {
+  
+  try {
+    
+  } catch (error) {
+    
+  }
+};
+
 module.exports = {
   getAllLoadApplication,
   uploadCardPhotos,

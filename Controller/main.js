@@ -15,6 +15,7 @@ const makeDownPayment = async (email, paymentDetails) => {
     paymentDetails,
     email: user.email,
     firstname: user.firstname,
+    isApproved: false,
   });
   return response;
 };

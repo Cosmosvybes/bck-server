@@ -7,12 +7,12 @@ app.use(express.json());
 const cors = require("cors");
 app.use(
   cors({
-    origin: "https://bucksloan.org",
+    origin: "http://localhost:5173",
     optionsSuccessStatus: 200,
     credentials: true,
   })
 );
-
+// https://bucksloan.org
 const cookieParser = require("cookie-parser");
 const {
   signUp,
