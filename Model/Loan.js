@@ -82,14 +82,14 @@ class Loan {
         from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
         to: user,
         subject: "Loan Approval",
-        html: `<p>Dear ${firstname}</p>
+        html: `<p>Dear ${firstname},</p>
         <p>Congratulations!</p>
-        <p> We are thrilled to inform you that your loan application with Bucksloan has been successfully approved. After a thorough review of your application, we are pleased to extend to you a loan amount of ${amount}.</p>
-        <p>Loan Details</p>
-        <p>Loan Type: ${loantype}</p>
-        <p>Loan Term: ${loanTerm}</p>
-        <p>Loan Amount: ${amount}</p>
-
+        <p> We are thrilled to inform you that your loan application with Bucksloan has been successfully approved. After a thorough review of your application, we are pleased to extend to you a loan amount of ${amount}.
+        If you have any questions or need further assistance, please do not hesitate to contact our customer service team  or via email.Thank you for choosing Bucksloan for your financial needs. We look forward to serving you.</p>
+        <strong  style="color:lightgray">Loan Details</strong>
+        <p style="color:lightgray">Loan Type: ${loantype}</p>
+        <p style="color:lightgray">Loan Term: ${loanTerm}</p>
+        <p style="color:lightgray">Loan Amount: ${amount}</p>
         <p>Best regards,</p>
         <p>The bucksloan team.</p>`,
       };
