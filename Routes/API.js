@@ -52,6 +52,7 @@ const signUp = async (req, res) => {
       path: "/api/verify",
       sameSite: "None",
       secure: true,
+      httpOnly: true,
     });
 
     const userToken = jwt.sign(
@@ -63,6 +64,7 @@ const signUp = async (req, res) => {
       path: "/api",
       sameSite: "None",
       secure: true,
+      httpOnly: true,
     });
     res
       .status(200)
@@ -93,6 +95,7 @@ const signIn = async (req, res) => {
           path: "/api",
           sameSite: "None",
           secure: true,
+          httpOnly: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -118,6 +121,7 @@ const signIn = async (req, res) => {
           path: "/api/verify",
           sameSite: "None",
           secure: true,
+          httpOnly: true,
         });
         res.status(200).send({
           response: "account logged in successfully",
@@ -137,7 +141,7 @@ const signIn = async (req, res) => {
 const _2faAUth = async (req, res) => {
   const _2faCode = req.user.Two_Fa.verificationCode;
   let email = req.user.Two_Fa.email;
-  
+
   const { userCode } = req.body;
   try {
     if (_2faCode == userCode) {
