@@ -305,7 +305,7 @@ const loanApplication = async (req, res) => {
   const user = req.user.payload;
   try {
     const response = await getLoan(user, loanData);
-    if (response.insertedId) {
+    if (response.modifiedCount || response.matchedCount) {
       res
         .status(200)
         .send({ response: "Loan application successfully submitted" });
