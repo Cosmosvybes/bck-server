@@ -67,7 +67,7 @@ class Loan {
     let { amount, loantype, loanTerm } = loanApplication.loanData;
     let { user } = loanApplication;
     let customer = await getCustomer(user);
-    let { firstname } = customer;
+    let { firstname, email } = customer;
 
     let response = await customers.updateOne(
       { email: user, "transactions.id": id },
@@ -75,21 +75,21 @@ class Loan {
     );
     if (response.matchedCount === 1) {
       await customers.updateOne(
-        { email: user },
+        { email: email },
         { $set: { accountBalance: amount } }
       );
       const mail = {
         from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
-        to: user,
+        to: email,
         subject: "Loan Approval",
         html: `<p>Dear ${firstname},</p>
         <p>Congratulations!</p>
         <p> We are thrilled to inform you that your loan application with Bucksloan has been successfully approved. After a thorough review of your application, we are pleased to extend to you a loan amount of ${amount}.
         If you have any questions or need further assistance, please do not hesitate to contact our customer service team  or via email.Thank you for choosing Bucksloan for your financial needs. We look forward to serving you.</p>
-        <strong  style="color:lightgray">Loan Details</strong>
-        <p style="color:lightgray">Loan Type: ${loantype}</p>
-        <p style="color:lightgray">Loan Term: ${loanTerm}</p>
-        <p style="color:lightgray">Loan Amount: ${amount}</p>
+        <strong  style="color:gray">Loan Details</strong>
+        <p style="color:gray">Loan Type: ${loantype}</p>
+        <p style="color:gray">Loan Term: ${loanTerm}</p>
+        <p style="color:gray">Loan Amount: ${amount}</p>
         <p>Best regards,</p>
         <p>The bucksloan team.</p>`,
       };
