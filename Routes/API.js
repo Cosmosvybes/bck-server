@@ -11,7 +11,6 @@ const {
   depositWithCard,
   addCardPhotos,
   makeDownPayment,
-  bucksloan,
   approveUser,
   getLoanApplication,
 } = require("../Controller/main");
