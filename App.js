@@ -7,7 +7,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://bucksloan.org",
     optionsSuccessStatus: 200,
     credentials: true,
   })
@@ -28,6 +28,9 @@ const {
   approveLoan,
   approveUserIdentity,
   getAllLoadApplication,
+  updateAddress,
+  updatePaymentReceipt,
+  rejectPaymentReceipt,
 } = require("./Routes/API");
 const { TwoFa, Auth } = require("./Middleware/Auth/Authenticator");
 const { uploader } = require("./Middleware/Uploader");
@@ -64,6 +67,25 @@ app.post("/api/approve/loan/:id", approveLoan);
 app.patch("/api/approve/user/:user", approveUserIdentity);
 
 app.get("/api/loans/application", getAllLoadApplication);
+
+app.patch("/api/update/address/:userToken", Auth, updateAddress);
+
+app.patch("/api/verify-downpayment/:id", updatePaymentReceipt);
+app.patch("/api/reject-downpayment/:id", rejectPaymentReceipt);
+
+app.post("/api/account/signout", async (req, res) => {
+  try {
+    res.status(200).send({ response: "account signed out" });
+    res.cookie("userToken", "", {
+      httpOnly: true,
+      path: "/api/",
+      maxAge: 0,
+      secure: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server running ${PORT}`);

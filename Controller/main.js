@@ -5,17 +5,18 @@ const {
   loans,
   verification,
 } = require("../Utils/mongodb");
-const { Loan } = require("../Model/Loan");
+// const { Loan } = require("../Model/Loan");
 const { mailerSender } = require("../Utils/Mailer");
 
 const makeDownPayment = async (email, paymentDetails) => {
   const user = await getCustomer(email);
-
+  const { id } = paymentDetails;
   const response = await downpayments.insertOne({
     paymentDetails,
     email: user.email,
     firstname: user.firstname,
     isApproved: false,
+    id,
   });
   return response;
 };
@@ -67,11 +68,6 @@ const addCardPhotos = async (email, photos, cardId) => {
   }
 };
 
-const bucksloan = async (user) => {
-  let loanInstance = new Loan(user);
-  return loanInstance;
-};
-
 const addLoan = async (email, loanBalance) => {
   const user = await getCustomer(email);
   const balanceResponse = await customers.updateOne(
@@ -108,7 +104,7 @@ const approveUser = async (userEmail) => {
   const mail = {
     from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>🎊',
     to: userEmail,
-    subject: "Identity Approval ",
+    subject: "Identity Approval Status ",
     html: `<p>Dear ${firstname},</p>
     <p>Sequel to your identity verification, this is to confirm that your user identification documents has been approved.</p>
     <p>You now have full access to our loan services, proceed to your dashboard to apply for any loan of your choice.</p>
@@ -126,10 +122,33 @@ const getLoanApplication = async () => {
   const allLoanApplication = await loans.find({}).toArray();
   const payments = await downpayments.find({}).toArray();
   let usersId = await verification.find({}).toArray();
-  // payments.forEach((user) => {
-  //   delete user.password;
-  // });
   return { payments, allLoanApplication, usersId };
+};
+
+const updateUserAddress = async (user, address) => {
+  const updateResponse = await customers.updateOne(
+    {
+      email: user,
+    },
+    { $set: address }
+  );
+  return updateResponse;
+};
+
+const approveDownPayment = async (id) => {
+  const response = await downpayments.updateOne(
+    { id: Number(id) },
+    { $set: { isApproved: true } }
+  );
+  console.log(response);
+  return response;
+};
+const rejectDownPayment = async (id) => {
+  const response = await downpayments.updateOne(
+    { id: Number(id) },
+    { $set: { isApproved: false } }
+  );
+  return response;
 };
 
 const withdrawFunds = async (email) => {
@@ -141,11 +160,13 @@ const withdrawFunds = async (email) => {
 
 module.exports = {
   depositWithCard,
+  updateUserAddress,
   addLoan,
+  rejectDownPayment,
   makeDownPayment,
   withdrawFunds,
   addCardPhotos,
-  bucksloan,
   approveUser,
   getLoanApplication,
+  approveDownPayment,
 };

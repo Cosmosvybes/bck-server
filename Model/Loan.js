@@ -64,9 +64,9 @@ const approveLoanRequest = async (user, loanId) => {
             <p> We are thrilled to inform you that your loan application with Bucksloan has been successfully approved. After a thorough review of your application, we are pleased to extend to you a loan amount of ${amount}.
             If you have any questions or need further assistance, please do not hesitate to contact our customer service team  or via email.Thank you for choosing Bucksloan for your financial needs. We look forward to serving you.</p>
             <strong>Loan Details</strong>
-            <b >Loan Type : ${loantype}</b>
-            <b>Loan Term: ${loanTerm}</p>
-            <b>Loan Amount: ${amount}</p>
+            <span><b>Loan Type - </b> <p> ${loantype}</p>  </span>
+            <span><b>Loan Term - </b> <p> ${loanTerm}</p>  </span>
+            <span><b>Loan Amount - </b> <p>  ${amount}</p>  </span>
             <p>Best regards,</p>
             <p style="color:coral; text-align:center;">The bucksloan team. &copy;</p>`,
   };

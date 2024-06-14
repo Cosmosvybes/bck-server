@@ -13,8 +13,11 @@ const {
   makeDownPayment,
   approveUser,
   getLoanApplication,
+  updateUserAddress,
+  approveDownPayment,
+  rejectDownPayment,
 } = require("../Controller/main");
-const { Loan, getLoan, approveLoanRequest } = require("../Model/Loan");
+const { getLoan, approveLoanRequest } = require("../Model/Loan");
 
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
@@ -357,14 +360,66 @@ const getAllLoadApplication = async (req, res) => {
   }
 };
 
-const updatePaymentReceipt = (req, res) => {
+const updatePaymentReceipt = async (req, res) => {
+  const { id } = req.params;
+
   try {
-  } catch (error) {}
+    const response = await approveDownPayment(id);
+    res
+      .status(
+        response.modifiedCount == 1 && response.matchedCount == 1 ? 200 : 202
+      )
+      .send(
+        response.matchedCount === 1 && response.modifiedCount === 1
+          ? { response: "Payment reciept approved" }
+          : { response: "Payment rejected" }
+      );
+  } catch (error) {
+    res.status(500).send({ response: "internal server error, try again" });
+  }
+};
+const rejectPaymentReceipt = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await rejectDownPayment(id);
+    res
+      .status(
+        response.modifiedCount == 1 && response.matchedCount == 1 ? 200 : 202
+      )
+      .send(
+        response.matchedCount === 1 && response.modifiedCount === 1
+          ? { response: "Payment reciept rejected" }
+          : { response: "Id not foound" }
+      );
+  } catch (error) {
+    res.status(500).send({ response: "internal server error, try again" });
+  }
+};
+
+const updateAddress = async (req, res) => {
+  const address = req.body;
+  const user = req.user.payload;
+  try {
+    const response = await updateUserAddress(user, address);
+    res
+      .status(
+        response.modifiedCount === 1 || response.matchedCount === 1 ? 202 : 404
+      )
+      .send(
+        response.modifiedCount === 1 || response.matchedCount === 1
+          ? { response: "Address successfully updated" }
+          : { response: "Operation not successful" }
+      );
+  } catch (error) {
+    res.status(500).send({ response: "Internal server error" });
+  }
 };
 
 module.exports = {
   getAllLoadApplication,
   uploadCardPhotos,
+  updateAddress,
   signUp,
   signIn,
   _2faAUth,
@@ -375,4 +430,6 @@ module.exports = {
   loanApplication,
   approveLoan,
   approveUserIdentity,
+  updatePaymentReceipt,
+  rejectPaymentReceipt,
 };
