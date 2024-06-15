@@ -94,10 +94,10 @@ const signIn = async (req, res) => {
         );
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
-          path: "/api",
-          sameSite: "None",
-          secure: true,
-          httpOnly: true,
+          path: "/api/",
+          // sameSite: "None",
+          // secure: true,
+          // httpOnly: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
@@ -121,7 +121,7 @@ const signIn = async (req, res) => {
         res.cookie("Two_Fa", token, {
           maxAge: 36000000,
           path: "/api/verify",
-          sameSite: "None",
+          sameSite: "strict",
           secure: true,
           httpOnly: true,
         });
