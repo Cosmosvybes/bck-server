@@ -95,8 +95,8 @@ const signIn = async (req, res) => {
         res.cookie("userToken", userToken, {
           maxAge: 360000000,
           path: "/api/",
-          // sameSite: "None",
-          // secure: true,
+          sameSite: "None",
+          secure: true,
           // httpOnly: true,
         });
         const code = Date.now();
