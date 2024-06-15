@@ -97,7 +97,7 @@ const signIn = async (req, res) => {
           path: "/api/",
           sameSite: "None",
           secure: true,
-          // httpOnly: true,
+          httpOnly: true,
         });
         const code = Date.now();
         const verificationCode = String(code).slice(7, 15);
