@@ -16,6 +16,8 @@ const {
   updateUserAddress,
   approveDownPayment,
   rejectDownPayment,
+  changePassword,
+  addNewPassword,
 } = require("../Controller/main");
 const { getLoan, approveLoanRequest } = require("../Model/Loan");
 
@@ -416,10 +418,44 @@ const updateAddress = async (req, res) => {
   }
 };
 
+const passwordRecoveryEndPoint = async (req, res) => {
+  const { email } = req.body;
+  try {
+    const response = await changePassword(email);
+    if (!response.token) {
+      res.status(200).send({ response });
+      return;
+    }
+    res.status(200).send({
+      response: "Verification code send to your email",
+      data: response,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const saveNewPassword = async (req, res) => {
+  const { password, email } = req.body;
+  try {
+    const response = await addNewPassword(email, password);
+    if (response.matchedCount == 1 || response.modifiedCount == 1) {
+      res.status(200).send({ response: "Password successfully changed" });
+      return;
+    } else {
+      res.status(403).send({ responsee: "Forbidden" });
+    }
+  } catch (error) {
+    res.status(500).send({ response: "Internal Sevrer error" });
+  }
+};
+
 module.exports = {
+  saveNewPassword,
   getAllLoadApplication,
   uploadCardPhotos,
   updateAddress,
+  passwordRecoveryEndPoint,
   signUp,
   signIn,
   _2faAUth,

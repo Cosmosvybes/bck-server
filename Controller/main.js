@@ -1,4 +1,7 @@
 const { getCustomer } = require("../Model/User");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 const {
   downpayments,
   customers,
@@ -158,7 +161,45 @@ const withdrawFunds = async (email) => {
   console.log(canMakeWithrawal);
 };
 
+async function changePassword(email) {
+  let getUser = await customers.findOne({ email: email });
+  const code = Date.now();
+  const verificationCode = String(code).slice(7, 15);
+
+  if (!getUser) {
+    return "user not found";
+  } else {
+    const mail = {
+      from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
+      to: email,
+      subject: "Password Recovery",
+      html: `<p>Hey ${email}</p>
+        <p>A Password recovery  attempt requires futher verification. To complete the password recovery enter the verification code below.</p>
+        <p>Verification code: ${verificationCode}</p>
+        <p>Thanks,</p>
+        <p>The bucksloan team.</p>`,
+    };
+    await mailerSender(mail);
+    const token = jwt.sign(
+      { Two_Fa: { verificationCode, email } },
+      process.env.api_secret
+    );
+    return { token, email };
+  }
+}
+
+const addNewPassword = async (user, password) => {
+  let encryptedPassword = await bcrypt.hash(password, saltRounds);
+  const response = await customers.updateOne(
+    { email: user },
+    { $set: { password: encryptedPassword } }
+  );
+  return response;
+};
+
 module.exports = {
+  changePassword,
+  addNewPassword,
   depositWithCard,
   updateUserAddress,
   addLoan,
