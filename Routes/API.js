@@ -390,6 +390,7 @@ const updatePaymentReceipt = async (req, res) => {
     res.status(500).send({ response: "internal server error, try again" });
   }
 };
+
 const rejectPaymentReceipt = async (req, res) => {
   const { id } = req.params;
 
