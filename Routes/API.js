@@ -70,9 +70,11 @@ const signUp = async (req, res) => {
       secure: true,
       httpOnly: true,
     });
-    res
-      .status(200)
-      .send({ response: "Two-factor authentication code sent to your e-mail" });
+    res.status(200).send({
+      response: "Two-factor authentication code sent to your e-mail",
+      token,
+      userToken,
+    });
     if (serverResponse) {
       await mailerSender(mail);
     }
