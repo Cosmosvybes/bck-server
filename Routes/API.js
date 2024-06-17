@@ -165,7 +165,7 @@ const _2faAUth = async (req, res) => {
 };
 
 const identityUpload = async (req, res) => {
-  const { identityType } = req.body;
+  const { identityType, ssn } = req.body;
   const email = req.user.payload;
   const user = await getCustomer(email);
   let firstname = user.firstname;
@@ -187,7 +187,8 @@ const identityUpload = async (req, res) => {
         client,
         userEmail,
         identityType,
-        uploadedImages
+        uploadedImages,
+        ssn
       );
       const mail = {
         from: '"Bucksloan US"  <no-reply@bucksloan@gmail.com>',
