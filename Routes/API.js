@@ -24,6 +24,13 @@ const { getLoan, approveLoanRequest } = require("../Model/Loan");
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
   try {
+    const isRegisteredUser = await getCustomer(email);
+    if (isRegisteredUser) {
+      res
+        .status(403)
+        .send({ response: "user exist, sign in or try new e-mail" });
+      return;
+    }
     const serverResponse = await newCustomer(
       firstname.toLowerCase(),
       lastname.toLowerCase(),
@@ -79,7 +86,7 @@ const signUp = async (req, res) => {
       await mailerSender(mail);
     }
   } catch (error) {
-    res.send({ error: error.message });
+    res.send({ response: "Server  currently unavailable, try again" });
   }
 };
 
