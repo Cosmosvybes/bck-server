@@ -19,8 +19,8 @@ const {
   changePassword,
   addNewPassword,
 } = require("../Controller/main");
-const { getLoan, approveLoanRequest } = require("../Model/Loan");
 
+const { getLoan, approveLoanRequest } = require("../Model/Loan");
 const signUp = async (req, res) => {
   const { firstname, lastname, email, phone, password } = req.body;
   try {
