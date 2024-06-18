@@ -7,7 +7,7 @@ app.use(express.json());
 const cors = require("cors");
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: "https://bucksloan.org",
     optionsSuccessStatus: 200,
     credentials: true,
   })
@@ -74,9 +74,9 @@ app.patch("/api/update/address/:userToken", Auth, updateAddress);
 
 app.patch("/api/verify-downpayment/:id", updatePaymentReceipt);
 app.patch("/api/reject-downpayment/:id", rejectPaymentReceipt);
-
 app.patch("/api/password-recovery", passwordRecoveryEndPoint);
 app.patch("/api/new/password", saveNewPassword);
+
 app.post("/api/account/signout", async (req, res) => {
   try {
     res.status(200).send({ response: "account signed out" });
